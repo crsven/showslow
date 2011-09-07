@@ -22,10 +22,10 @@ foreach ($list_items as $url) {
 	if ($first) {
 		$first = false;
 	} else {
-		$list .= ', ';
+		$list .= ' OR ';
 	}
 
-	$list .= "'".mysql_real_escape_string($url)."'"; 
+	$list .= "urls.url LIKE '".mysql_real_escape_string($url)."%'";
 }
 
 $query = sprintf("SELECT url, last_update,
@@ -36,7 +36,8 @@ $query = sprintf("SELECT url, last_update,
 		LEFT JOIN yslow2 ON urls.yslow2_last_id = yslow2.id
 		LEFT JOIN pagespeed ON urls.pagespeed_last_id = pagespeed.id
 		LEFT JOIN dynatrace ON urls.dynatrace_last_id = dynatrace.id
-	WHERE urls.url IN (%s)", $list);
+	WHERE (%s)", $list);
+
 $result = mysql_query($query);
 
 if (!$result) {
@@ -103,13 +104,7 @@ if (count($rows) && ($yslow || $pagespeed || $dynatrace))
 	</tr>
 
 	<?php
-	foreach ($list_items as $url) {
-		if (!array_key_exists($url, $rows)) {
-			continue;
-		}
-
-		$row = $rows[$url];
-
+	foreach ($rows as $row) {
 		if (is_null($row) || (is_null($row['o']) && is_null($row['ps_o']) && is_null($row['dt_o']))) {
 			continue;
 		}

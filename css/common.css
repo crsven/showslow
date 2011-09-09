@@ -38,8 +38,9 @@ h1 b {color: #F60;  font-weight: normal;}
 #headerNav a:hover {color: #FFF;}
 
 #topNav {border-bottom: 2px solid #ff8c40; border-top: 1px solid #E5E5E5; background: #DDD; float: left; width: 100%;}
-#topNav .stackContent {float:right; left: -50%; position: relative; text-align: left;}
-#topNav ul {left: 50%; list-style: none; position: relative;}
+#topNav .stackContent {position: relative; text-align: left;}
+#topNav ul {border-bottom: 1px solid #888; clear: both; list-style: none; overflow: hidden; position: relative;}
+#topNav ul.second_tier {margin: 0 auto;}
 #topNav li {float: left; position: relative; }
 #topNav li a {border-left: 1px solid #F1F1F1; border-right: 1px solid #C6C6C6; float: left; padding: .82em; text-decoration: none;}
 #topNav li a:hover {background: #FBD259;}

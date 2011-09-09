@@ -11,21 +11,31 @@ if (!array_key_exists('id', $_GET) || !array_key_exists($_GET['id'], $customList
 <h1>404 No list found</h1>
 <p>List with such ID is not defined</p>
 </body></html>
-<?php 
+<?php
 	exit;
 }
 
-$list_items = $customLists[$_GET['id']]['urls'];
-$list = '';
-$first = true;
-foreach ($list_items as $url) {
-	if ($first) {
-		$first = false;
-	} else {
-		$list .= ' OR ';
-	}
+$searchstring = null;
+if (array_key_exists('search', $_GET) && trim($_GET['search']) != '') {
+	$searchstring = "urls.url LIKE '%".mysql_real_escape_string(trim($_GET['search']))."%'";
+}
 
-	$list .= "urls.url LIKE '".mysql_real_escape_string($url)."%'";
+if (!$searchstring){
+  $list_items = $customLists[$_GET['id']]['urls'];
+  $list = '';
+  $first = true;
+  foreach ($list_items as $url) {
+    if ($first) {
+      $first = false;
+    } else {
+      $list .= ' OR ';
+    }
+
+    $list .= "urls.url LIKE '%".mysql_real_escape_string($url)."%'";
+  }
+  $query_addition = $list;
+} else {
+  $query_addition = $searchstring;
 }
 
 $query = sprintf("SELECT url, last_update,
@@ -36,7 +46,7 @@ $query = sprintf("SELECT url, last_update,
 		LEFT JOIN yslow2 ON urls.yslow2_last_id = yslow2.id
 		LEFT JOIN pagespeed ON urls.pagespeed_last_id = pagespeed.id
 		LEFT JOIN dynatrace ON urls.dynatrace_last_id = dynatrace.id
-	WHERE (%s)", $list);
+	WHERE (%s)", $query_addition);
 
 $result = mysql_query($query);
 
@@ -65,6 +75,9 @@ while ($row = mysql_fetch_assoc($result)) {
 
 $TITLE = $customLists[$_GET['id']]['title'];
 $SECTION = 'custom_list_'.$_GET['id'];
+if($_GET['sublist'] && trim($_GET['sublist']) != '') {
+  $SUB_SECTION = 'sublist_'.$_GET['sublist'];
+}
 require_once(dirname(__FILE__).'/header.php');
 ?>
 <h2 style="margin-bottom: 0"><?php echo htmlentities($customLists[$_GET['id']]['title'])?></h2>
@@ -151,7 +164,7 @@ if (count($rows) && ($yslow || $pagespeed || $dynatrace))
 	mysql_free_result($result);
 	?>
 	</table>
-<?php 
+<?php
 }
 
 require_once(dirname(__FILE__).'/footer.php');

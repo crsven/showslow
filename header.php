@@ -216,7 +216,13 @@ foreach ($customLists as $list_id => $list) {
 		continue;
 	}
 
-	?><li><a <?php if ($SECTION == 'custom_list_'.$list_id) {?>class="current" <?php } ?>href="<?php echo $showslow_base ?>list.php?id=<?php echo $list_id; ?>"><?php echo $list['title'] ?></a></li><?php
+  $isCurrentList = false;
+  if ($SECTION == 'custom_list_'.$list_id) {
+    $isCurrentList = true;
+    $currentListId = $list_id;
+  }
+
+	?><li><a <?php if ($isCurrentList) {?>class="current" <?php } ?>href="<?php echo $showslow_base ?>list.php?id=<?php echo $list_id; ?>"><?php echo $list['title'] ?></a></li><?php
 }
 
 foreach ($additionalMenuItems as $menu_item) {
@@ -227,6 +233,19 @@ foreach ($additionalMenuItems as $menu_item) {
 <li><a href="https://github.com/sergeychernyshev/showslow/downloads">Download ShowSlow</a></li>
 
 			</ul>
+      <?php if ($isCurrentList && array_key_exists('sublists', $customLists[$list_id])) { ?>
+        <ul class="second_tier">
+          <?php
+            foreach ($customLists[$list_id]['sublists'] as $sublist) {
+              $isCurrentSublist = false;
+              if ($SUB_SECTION == 'sublist_'.$sublist['title']) {
+                $isCurrentSublist = true;
+              }
+          ?>
+            <li <?php if ($isCurrentSublist) {?>class="current" <?php } ?>><a href="/list.php?id=<?php echo $list_id ?>&sublist=<?php echo $sublist['title'] ?>&search=<?php echo $sublist['urls'][0] ?>"><?php echo $sublist['title'] ?></a></li>
+          <?php } ?>
+        </ul>
+      <?php } ?>
 		</div><!-- stackContent -->
 	</div><!-- topNav -->
 

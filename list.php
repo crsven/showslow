@@ -74,14 +74,18 @@ while ($row = mysql_fetch_assoc($result)) {
 }
 
 $TITLE = $customLists[$_GET['id']]['title'];
+$DESCRIPTION = $customLists[$_GET['id']]['description'];
 $SECTION = 'custom_list_'.$_GET['id'];
 if($_GET['sublist'] && trim($_GET['sublist']) != '') {
   $SUB_SECTION = 'sublist_'.$_GET['sublist'];
+  $TITLE = $customLists[$_GET['id']]['sublists'][$_GET['sublist']]['title'];
+  $DESCRIPTION = $customLists[$_GET['id']]['sublists'][$_GET['sublist']]['description'];
+  error_log($TITLE);
 }
 require_once(dirname(__FILE__).'/header.php');
 ?>
-<h2 style="margin-bottom: 0"><?php echo htmlentities($customLists[$_GET['id']]['title'])?></h2>
-<p style="margin-top: 0.2em"><?php echo $customLists[$_GET['id']]['description'] ?></p>
+<h2 style="margin-bottom: 0"><?php echo htmlentities($TITLE)?></h2>
+<p style="margin-top: 0.2em"><?php echo $DESCRIPTION ?></p>
 
 <?php if (!is_null($addThisProfile)) {?>
 <!-- AddThis Button BEGIN -->

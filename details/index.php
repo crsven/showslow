@@ -711,8 +711,10 @@ if (count($pagetest) > 0) {
 	</form>
 	</table>
 <?php
-}
+} ?>
+<a href="javascript:har_creator.getHar()">Create HAR for this URL</a>
 
+<?php
 if (count($har) > 0) {
 	$har_url = is_null($har[0]['link']) ?
 		$showslow_base.'details/har.php?id='.urlencode($har[0]['id']).'callback=onInputData'
@@ -739,7 +741,25 @@ if (count($har) > 0) {
 }
 
 if ($enableFlot) {
-	?><script src="<?php echo assetURL('details/showslow.flot.js') ?>"></script><?php
-}
-
-require_once(dirname(dirname(__FILE__)).'/footer.php');
+  ?><script src="<?php echo assetURL('details/showslow.flot.js') ?>"></script><?php
+} ?>
+  <script type="text/javascript">
+    var har_creator = {};
+    har_creator.getHar = function (){
+      var the_url = "<?php echo $url ?>";
+      $.ajax({
+        url: "har_creator.php",
+        data: {url: the_url},
+        type: "POST",
+        dataType: "text",
+        success: function() {
+          console.log("success");
+        },
+        error: function(thing, err1, err2) {
+          console.log(err1 + ":" + err2);
+        }
+      });
+    };
+  </script>
+<?php
+  require_once(dirname(dirname(__FILE__)).'/footer.php');
